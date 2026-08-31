@@ -620,9 +620,9 @@ tr:last-child td{border-bottom:none}
   </div>
   <div class="chips" id="hdr-chips">
     <div class="chip">ABIERTOS <b id="hdr-open">44</b></div>
-    <div class="chip" id="chip-update" style="background: rgba(26, 158, 62, 0.25); border-color: rgba(26, 158, 62, 0.5);">ULT. ACTUA. <b id="hdr-update-date">31/08/2026 17:49</b></div>
+    <div class="chip" id="chip-update" style="background: rgba(26, 158, 62, 0.25); border-color: rgba(26, 158, 62, 0.5);">ULT. ACTUA. <b id="hdr-update-date">31/08/2026 17:56</b></div>
     <div class="chip" id="chip-records" style="">REGISTROS <b id="hdr-records">12.572</b></div>
-    <button id="btn-home" onclick="goHome()" style="display: none; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: rgb(255, 255, 255); border-radius: 7px; padding: 4px 12px; font-size: 12px; font-family: var(--font); cursor: pointer; font-weight: 600; transition: 0.15s;" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">← Portada</button>
+    <button id="btn-home" onclick="goHome()" style="display:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:7px;padding:4px 12px;font-size:12px;font-family:var(--font);cursor:pointer;font-weight:600;transition:all .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">← Portada</button>
     <label style="position: relative; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 7px; padding: 5px 12px; font-family: var(--mono); font-size: 11px; color: rgb(255, 255, 255); cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,.28)'" onmouseout="this.style.background='rgba(255,255,255,.15)'" id="xlbtn"><span id="xlbtn-txt">📂 Cargar Excel</span></label>
     <button id="btn-drive" onclick="loadFromDriveLink()" title="Traer el archivo publicado en Google Drive" style="background: rgba(66, 133, 244, 0.25); border: 1px solid rgba(255, 255, 255, 0.3); color: rgb(255, 255, 255); border-radius: 7px; padding: 5px 12px; font-family: var(--mono); font-size: 11px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: 0.15s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(66,133,244,.4)'" onmouseout="this.style.background='rgba(66,133,244,.25)'"><span id="btn-drive-txt">🔄 Cargar desde Drive</span></button>
     
@@ -756,7 +756,7 @@ tr:last-child td{border-bottom:none}
     </div>
 
     <div class="portada-footer">
-      Integración Operativa Everest · Chivería Canal Granizados · <span id="portada-footer-txt">Actualizado al 31/08/2026 17:49</span>
+      Integración Operativa Everest · Chivería Canal Granizados · <span id="portada-footer-txt">Actualizado al 31/08/2026 17:56</span>
     </div>
   </div>
 </div>
@@ -766,17 +766,17 @@ tr:last-child td{border-bottom:none}
   <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-family:var(--mono)">
     <span id="bc-home-link" onclick="goHome()" style="color:var(--txt3);cursor:pointer;transition:color .15s" onmouseover="this.style.color='var(--chiv-navy)'" onmouseout="this.style.color='var(--txt3)'">🏠 Portada</span>
     <span style="color:rgba(13,61,110,.3);font-size:16px;line-height:1">›</span>
-    <span id="bc-icon" style="font-size:15px">📋</span>
-    <span id="bc-section" style="font-weight: 700; font-size: 12px; letter-spacing: 0.2px; color: rgb(124, 58, 237);">Status por Supervisor de Ventas</span>
+    <span id="bc-icon" style="font-size:15px"></span>
+    <span id="bc-section" style="font-weight:700;font-size:12px;letter-spacing:.2px"></span>
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
-    <span id="bc-count" style="font-size:10px;color:var(--txt3);font-family:var(--mono)">12.572 registros</span>
+    <span id="bc-count" style="font-size:10px;color:var(--txt3);font-family:var(--mono)"></span>
     <span style="color:rgba(13,61,110,.15);font-size:18px">|</span>
-    <span id="bc-update" style="font-size:10px;color:var(--txt3);font-family:var(--mono)">Actualizado: 31/08/2026 17:44</span>
+    <span id="bc-update" style="font-size:10px;color:var(--txt3);font-family:var(--mono)"></span>
   </div>
 </div>
 
-<div class="main" id="sections-main" style="display: none;">
+<div class="main" id="sections-main" style="display:none">
 
 <!-- OVERVIEW -->
 <div class="pane" id="tab-overview">
@@ -1525,13 +1525,13 @@ tr:last-child td{border-bottom:none}
   <!-- PASO 1: elegir supervisor -->
   <div class="card" style="--c:#7c3aed;margin-bottom:13px" id="sup-step1-card">
     <div class="ctitle">Paso 1 — Selecciona tu nombre (o varios, si supervisas a más de una persona)</div>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:8px" id="sup-select-wrap"><span class="flbl">SUPERVISOR DE VENTAS:</span><div class="ms-wrap"><button type="button" class="ms-btn ms-active">2 sel.</button></div></div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:8px" id="sup-select-wrap"></div>
   </div>
 
-  <div id="sup-empty-msg" style="text-align: center; padding: 40px; color: var(--txt2); font-family: var(--mono); font-size: 13px; display: none;">👆 Selecciona tu nombre arriba para continuar</div>
+  <div id="sup-empty-msg" style="text-align:center;padding:40px;color:var(--txt2);font-family:var(--mono);font-size:13px">👆 Selecciona tu nombre arriba para continuar</div>
 
   <!-- PASO 2: rango de fechas + resumen + detalle (aparece solo tras elegir supervisor) -->
-  <div id="sup-content" style="display: block;">
+  <div id="sup-content" style="display:none">
     <div class="card" style="--c:#7c3aed;margin-bottom:13px">
       <div class="ctitle">Paso 2 — Elige el rango de fechas</div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:8px">
@@ -1554,10 +1554,10 @@ tr:last-child td{border-bottom:none}
 
     <div class="ctitle" style="margin:2px 0 8px 2px">Resumen del período — casos abiertos y cerrados</div>
     <div class="krow" id="sup-kpis">
-      <div class="kcard" style="--c:#7c3aed"><div class="klbl">Total Trámites</div><div class="kval" id="sup-k-total">26</div></div>
-      <div class="kcard" style="--c:#1a9e3e"><div class="klbl">Cerrados / Ejecutados</div><div class="kval" id="sup-k-cerrados">26</div></div>
-      <div class="kcard" style="--c:#e07800"><div class="klbl">Pendientes</div><div class="kval" id="sup-k-pendientes">0</div></div>
-      <div class="kcard" style="--c:#cc0000"><div class="klbl">Vencidos (+7 días)</div><div class="kval" id="sup-k-vencidos">0</div></div>
+      <div class="kcard" style="--c:#7c3aed"><div class="klbl">Total Trámites</div><div class="kval" id="sup-k-total">—</div></div>
+      <div class="kcard" style="--c:#1a9e3e"><div class="klbl">Cerrados / Ejecutados</div><div class="kval" id="sup-k-cerrados">—</div></div>
+      <div class="kcard" style="--c:#e07800"><div class="klbl">Pendientes</div><div class="kval" id="sup-k-pendientes">—</div></div>
+      <div class="kcard" style="--c:#cc0000"><div class="klbl">Vencidos (+7 días)</div><div class="kval" id="sup-k-vencidos">—</div></div>
     </div>
 
     <div class="card">
@@ -1570,192 +1570,10 @@ tr:last-child td{border-bottom:none}
         <th style="cursor:pointer;user-select:none" onclick="supSortBy('tipo')">Tipo <span id="sup-sort-tipo"></span></th>
         <th style="cursor:pointer;user-select:none" onclick="supSortBy('cli')">Cliente <span id="sup-sort-cli"></span></th>
         <th style="cursor:pointer;user-select:none" onclick="supSortBy('dist')">Responsable <span id="sup-sort-dist"></span></th>
-        <th style="cursor:pointer;user-select:none" onclick="supSortBy('fecha')">Fecha <span id="sup-sort-fecha">▼</span></th>
+        <th style="cursor:pointer;user-select:none" onclick="supSortBy('fecha')">Fecha <span id="sup-sort-fecha"></span></th>
         <th style="cursor:pointer;user-select:none" onclick="supSortBy('estado')">Estado <span id="sup-sort-estado"></span></th>
         <th style="cursor:pointer;user-select:none" onclick="supSortBy('sla')">SLA <span id="sup-sort-sla"></span></th>
-      </tr></thead><tbody id="sup-tbody"><tr onclick="supShowClienteDetail(0)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">CLAUDIA PATRICIA CHACON GOMEZ</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo lll</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-31</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:var(--txt3)">—</td>
-      </tr><tr onclick="supShowClienteDetail(1)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">CLAUDIA PATRICIA CHACON GOMEZ</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo lll</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-28</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA 20d háb.</td>
-      </tr><tr onclick="supShowClienteDetail(2)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">CLAUDIA PATRICIA CHACON GOMEZ</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo lll</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-28</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:var(--txt3)">—</td>
-      </tr><tr onclick="supShowClienteDetail(3)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">CLAUDIA PATRICIA CHACON GOMEZ</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo lll</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-28</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:var(--txt3)">—</td>
-      </tr><tr onclick="supShowClienteDetail(4)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX AMERICANA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-24</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 2.0d</td>
-      </tr><tr onclick="supShowClienteDetail(5)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX JUAN TANCA MARENGO 1</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-22</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 3.0d</td>
-      </tr><tr onclick="supShowClienteDetail(6)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX AMERICANA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-22</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 3.0d</td>
-      </tr><tr onclick="supShowClienteDetail(7)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX AMERICANA</td>
-        <td style="font-size:11px;color:var(--txt2)">Seimalsa</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-21</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(8)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ACEVENTOS S.A- BAR COL ALEMAN HUMBOLDT</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-19</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(9)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX 25 DE JULIO</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-17</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 2.0d</td>
-      </tr><tr onclick="supShowClienteDetail(10)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX EESS JUAN TANCA MARENGO II</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-17</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(11)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ACEVENTOS S.A- ACEVENTOS</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-17</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 3.0d</td>
-      </tr><tr onclick="supShowClienteDetail(12)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">CLAUDIA PATRICIA CHACON GOMEZ</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-17</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:var(--txt3)">—</td>
-      </tr><tr onclick="supShowClienteDetail(13)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">TOUT FAMILY RESTOPARK S.A.S.</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-14</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA 10d háb.</td>
-      </tr><tr onclick="supShowClienteDetail(14)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX EQUITRANSA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-13</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 0.0d</td>
-      </tr><tr onclick="supShowClienteDetail(15)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX PERIMETRAL</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-13</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 0.0d</td>
-      </tr><tr onclick="supShowClienteDetail(16)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX LA JOYA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-12</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(17)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">Instal.</td>
-        <td style="font-weight:600">ACEVENTOS S.A</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-12</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Instalada</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA 9d háb.</td>
-      </tr><tr onclick="supShowClienteDetail(18)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ACEVENTOS S.A- ACEVENTOS</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-11</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 4.0d</td>
-      </tr><tr onclick="supShowClienteDetail(19)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">NOVACOCINA S.A- PLANTA SALICA</td>
-        <td style="font-size:11px;color:var(--txt2)">Frio Scarlata</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-10</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 12.0d</td>
-      </tr><tr onclick="supShowClienteDetail(20)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX STAND ALONE LISTO LA PREVISORA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo III</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-10</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 0.0d</td>
-      </tr><tr onclick="supShowClienteDetail(21)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">HOTEL ORO VERDE S.A- HOTEL ORO VERDE</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-07</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(22)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ATIMASA S.A.- PRIMAX EL MANGO</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo I</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-06</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr><tr onclick="supShowClienteDetail(23)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">RIERA CARDENAS ANA MARIA- RIERA CARDENAS ANA MARIA</td>
-        <td style="font-size:11px;color:var(--txt2)">Facundo II</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-05</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 0.0d</td>
-      </tr><tr onclick="supShowClienteDetail(24)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">NOVACOCINA S.A- PLANTA SALICA</td>
-        <td style="font-size:11px;color:var(--txt2)">Frio Scarlata</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-05</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#c06800;font-weight:600">⚠️ Fuera SLA P2 5.0d</td>
-      </tr><tr onclick="supShowClienteDetail(25)" style="cursor:pointer">
-        <td style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c3aed">MC</td>
-        <td style="font-weight:600">ALBENOS S.A- PANADERIA LA SELECTA LOS OLIVOS</td>
-        <td style="font-size:11px;color:var(--txt2)">Seimalsa</td>
-        <td style="font-family:var(--mono);font-size:11px">2026-08-04</td>
-        <td><span style="background:rgba(26,158,62,.12);color:#1a9e3e;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">Cerrado</span></td>
-        <td style="font-size:11px;color:#1a8c3a;font-weight:600">✅ Cumple P2 1.0d</td>
-      </tr></tbody></table></div>
+      </tr></thead><tbody id="sup-tbody"></tbody></table></div>
     </div>
   </div>
 </div>
@@ -8977,7 +8795,10 @@ initPortada();
 // (ya normalizado, sin duplicados) de la misma lista, sin links distintos
 // por persona.
 (function(){
-  const esMovil=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||window.innerWidth<768;
+  // Solo por tipo de dispositivo real (user-agent) — NO por ancho de ventana,
+  // porque una ventana angosta en computadora (sin maximizar, pantalla chica)
+  // se confundía con un celular y saltaba la portada sin que correspondiera.
+  const esMovil=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
   if(!esMovil)return; // desktop: se queda en la portada normal
   let intentos=0;
   const esperar=setInterval(()=>{
@@ -9025,16 +8846,4 @@ initPortada();
 
 
 
-<div class="ms-panel" style="width: 240px; top: 4px; left: 182.167px; max-height: 303.667px;">
-    <div class="ms-head">
-      <input class="ms-srch" type="text" placeholder="🔍 Buscar...">
-      <div class="ms-acts">
-        <span class="ms-act" data-action="all">Todo</span>
-        <span class="ms-act" data-action="none">Limpiar</span>
-      </div>
-    </div>
-    <div class="ms-list"><label class="ms-row ms-row-on"><input type="checkbox" value="CESAR RIVAS"><span class="ms-txt" title="CESAR RIVAS">CESAR RIVAS</span></label><label class="ms-row ms-row-on"><input type="checkbox" value="RIVAS CESAR AUGUSTO"><span class="ms-txt" title="RIVAS CESAR AUGUSTO">RIVAS CESAR AUGUSTO</span></label></div>
-    <div class="ms-foot">
-      <span class="ms-cnt">2 de 42 seleccionados</span>
-      <button class="ms-ok" type="button">Aplicar ✓</button>
-    </div></div></body></html>
+</body></html>
