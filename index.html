@@ -14791,15 +14791,9 @@ async function dec(s,z){
   var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
   return JSON.parse(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).text());
 }
-function recMcp(real){
-  var o={};
-  try{Object.getOwnPropertyNames(real).forEach(function(k){var v=real[k];o[k]=typeof v==='function'?v.bind(real):v;});}catch(e){}
-  o.callTool=async function(server,tool,args){
-    var res=await real.callTool.apply(real,arguments);
-    if(tool==='get_values'&&args&&args.spreadsheetId)SNAP.set(hkey(args.spreadsheetId,args.range),{r:args.range,res:res});
-    return res;};
-  return o;
-}
+function recMcp(real){var o={};try{Object.getOwnPropertyNames(real).forEach(function(k){var v=real[k];o[k]=typeof v==='function'?v.bind(real):v;});}catch(e){}
+  o.callTool=async function(server,tool,args){var res=await real.callTool.apply(real,arguments);
+    if(tool==='get_values'&&args&&args.spreadsheetId)SNAP.set(hkey(args.spreadsheetId,args.range),{r:args.range,res:res});return res;};return o;}
 async function snapMeta(){
   if(META)return META;
   var s=await A.db.doc('snap/meta').get();
@@ -14880,8 +14874,75 @@ function pill(){
   p.textContent='';p.appendChild(h('b',{style:'color:#fff',text:r.n||''}));
   if(A.name)p.appendChild(h('span',{text:' · '+A.name}));
   if(META&&META.ts)p.appendChild(h('div',{style:'font-size:10px;color:#7fb8dd;margin-top:1px',text:'Datos al '+fmtTs(META.ts)}));
+  if(A.idUsuario)p.appendChild(h('div',{style:'font-size:10px;margin-top:2px'},[h('a',{style:'color:#7fb8dd;cursor:pointer;text-decoration:underline',text:'Cambiar de usuario',onclick:salir})]));
 }
-function lock(title,msg,btns){
+
+/* ── Credenciales: ID de usuario + clave (hash PBKDF2 en la base del artefacto) ── */
+var PERFIL2ROL={'administrador':'ADMIN','coordinacion tecnica':'COORD','asistente de operaciones':'ASIS','supervisor comercial':'SUP','tecnico':'TEC'};
+function nrm(t){return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
+function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('');}
+function unhex(s){var u=new Uint8Array(s.length/2);for(var i=0;i<u.length;i++)u[i]=parseInt(s.substr(i*2,2),16);return u;}
+async function hashClave(clave,saltHex){
+  var key=await crypto.subtle.importKey('raw',new TextEncoder().encode(clave),'PBKDF2',false,['deriveBits']);
+  return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:unhex(saltHex),iterations:150000,hash:'SHA-256'},key,256));
+}
+function rnd(n){var a=new Uint8Array(n);crypto.getRandomValues(a);return a;}
+function newSalt(){return hex(rnd(16));}
+function genClave(){var L='abcdefghjkmnpqrstuvwxyz',U='ABCDEFGHJKLMNPQRSTUVWXYZ',N='23456789',all=L+U+N,r=rnd(12),o='';
+  o+=L[r[0]%L.length]+U[r[1]%U.length]+N[r[2]%N.length]+N[r[3]%N.length];
+  for(var i=4;i<10;i++)o+=all[r[i]%all.length];
+  return o.split('').sort(function(){return rnd(1)[0]%2?1:-1;}).join('');}
+async function setClave(id,clave,temp){var salt=newSalt();await A.db.doc('claves/'+id).set({salt:salt,hash:await hashClave(clave,salt),temp:!!temp,ts:Date.now()});}
+var IN='width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;margin-top:8px;font-family:var(--font,sans-serif)';
+async function userDoc(id){var s=await A.db.doc('usuarios/'+id).get();return s.exists?s.data():null;}
+async function resolveLinked(){
+  var v=await A.db.doc('vinculos/'+A.uid).get();if(!v.exists)return null;
+  var id=v.data().id,u=await userDoc(id);if(!u)return null;
+  A.idUsuario=id;if(u.nombre)A.name=u.nombre;
+  if(u.activo===false)return 'OFF';
+  if(!ROLES[u.rol])return null;
+  var c=await A.db.doc('claves/'+id).get();if(c.exists&&c.data().temp)return 'CHG';
+  return u.rol;
+}
+function loginScreen(err){
+  var id=h('input',{placeholder:'ID de usuario (ej. jairo.aguirre)',autocomplete:'username',autocapitalize:'none',style:IN});
+  var pw=h('input',{type:'password',placeholder:'Clave',autocomplete:'current-password',style:IN});
+  var em=h('div',{style:'color:#b91c1c;font-size:12px;min-height:16px;margin-top:8px',text:err||''});
+  var go=async function(){em.textContent='';try{await doLogin(id.value,pw.value,em);}catch(e){em.textContent='No se pudo ingresar: '+errTxt(e);}};
+  pw.onkeydown=function(ev){if(ev.key==='Enter')go();};
+  lock('Ingresa a SIGO','Escribe tu ID de usuario y tu clave. Si aún no las tienes, pídelas al administrador.',[
+    h('button',{style:BTN+'background:#e31e24;color:#fff',text:'Entrar',onclick:go}),
+    h('button',{style:BTN+'background:#e2e8f0;color:#0c2d5a',text:'Solicitar acceso',onclick:solicitar})],
+    h('div',{style:'text-align:left;margin-top:12px'},[id,pw,em]));
+}
+async function doLogin(idRaw,clave,em){
+  var id=String(idRaw||'').trim().toLowerCase();
+  if(!id||!clave){em.textContent='Escribe tu ID de usuario y tu clave.';return;}
+  var it=await A.db.doc('intentos/'+A.uid).get(),st=it.exists?it.data():{n:0,hasta:0};
+  if((st.hasta||0)>Date.now()){em.textContent='Demasiados intentos. Espera '+Math.ceil((st.hasta-Date.now())/60000)+' min.';return;}
+  var u=await userDoc(id),c=await A.db.doc('claves/'+id).get(),cd=c.exists?c.data():null,ok=false;
+  if(u&&cd)ok=(await hashClave(clave,cd.salt))===cd.hash;
+  if(!ok||u.activo===false){
+    var n=(st.n||0)+1,blk=n>=5;
+    await A.db.doc('intentos/'+A.uid).set({n:blk?0:n,hasta:blk?Date.now()+15*60000:0});
+    em.textContent=(ok&&u&&u.activo===false)?'Ese usuario está desactivado.':'ID o clave incorrectos.'+(blk?' Bloqueado por 15 minutos.':'');return;}
+  await A.db.doc('intentos/'+A.uid).set({n:0,hasta:0});
+  await A.db.doc('vinculos/'+A.uid).set({id:id,ts:Date.now()});
+  init();
+}
+function changeScreen(){
+  var a=h('input',{type:'password',placeholder:'Nueva clave (mín. 8, letras y números)',autocomplete:'new-password',style:IN});
+  var b=h('input',{type:'password',placeholder:'Repite la nueva clave',autocomplete:'new-password',style:IN});
+  var em=h('div',{style:'color:#b91c1c;font-size:12px;min-height:16px;margin-top:8px'});
+  var go=async function(){
+    if(a.value.length<8||!/[A-Za-z]/.test(a.value)||!/\d/.test(a.value)){em.textContent='Mínimo 8 caracteres, con letras y números.';return;}
+    if(a.value!==b.value){em.textContent='Las dos claves no coinciden.';return;}
+    try{await setClave(A.idUsuario,a.value,false);init();}catch(e){em.textContent='No se pudo guardar: '+errTxt(e);}};
+  b.onkeydown=function(ev){if(ev.key==='Enter')go();};
+  lock('Cambia tu clave','Tu clave temporal sirve una sola vez. Elige una propia para seguir.',[h('button',{style:BTN+'background:#e31e24;color:#fff',text:'Guardar clave',onclick:go})],h('div',{style:'text-align:left;margin-top:12px'},[a,b,em]));
+}
+async function salir(){try{await A.db.doc('vinculos/'+A.uid).delete();}catch(e){}location.reload();}
+function lock(title,msg,btns,extra){
   var o=$('acc-lock');if(o)o.remove();
   o=h('div',{id:'acc-lock',style:'position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#0c2d5a 0%,#1a4a82 60%,#0d3d6e 100%);font-family:var(--font,sans-serif)'},[
     h('div',{style:'max-width:440px;width:100%;background:#fff;border-radius:14px;padding:26px 24px;box-shadow:0 20px 60px #0008;border-top:4px solid #e31e24;text-align:center'},[
@@ -14889,6 +14950,7 @@ function lock(title,msg,btns){
       h('div',{style:'font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#1a4a82;font-weight:700;margin-top:4px',text:'SIGO · Sistema Integral de Gestión Operativa'}),
       h('div',{style:'font-size:19px;font-weight:800;color:#0c2d5a;margin:10px 0 6px',text:title}),
       h('div',{style:'font-size:13px;color:#475569;line-height:1.5',text:msg||''}),
+      extra||null,
       h('div',{style:'display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px'},btns||[])
     ])
   ]);
@@ -14913,9 +14975,15 @@ async function init(){
   try{snap=await db.doc('acceso/'+me.id).get();}
   catch(e){lock('No pude leer tu rol','Intenta de nuevo en un momento. ('+errTxt(e)+')',[h('button',{style:BTN+'background:#1a4a82;color:#fff',text:'Reintentar',onclick:init})]);return;}
   var d=snap.exists?snap.data():null;
-  if(!d){noRole();return;}
-  if(d.activo===false||!ROLES[d.rol]){lock('Tu acceso está desactivado','Habla con el administrador de SIGO para reactivarlo.',[h('button',{style:BTN+'background:#1a4a82;color:#fff',text:'Reintentar',onclick:init})]);return;}
-  apply(d.rol);
+  if(d){
+    if(d.activo===false||!ROLES[d.rol]){lock('Tu acceso está desactivado','Habla con el administrador de SIGO para reactivarlo.',[h('button',{style:BTN+'background:#1a4a82;color:#fff',text:'Reintentar',onclick:init})]);return;}
+    apply(d.rol);return;
+  }
+  var lr=null;try{lr=await resolveLinked();}catch(e){lr=null;}
+  if(lr==='OFF'){lock('Tu acceso está desactivado','Habla con el administrador de SIGO para reactivarlo.',[h('button',{style:BTN+'background:#1a4a82;color:#fff',text:'Reintentar',onclick:init}),h('button',{style:BTN+'background:#e2e8f0;color:#0c2d5a',text:'Usar otro usuario',onclick:salir})]);return;}
+  if(lr==='CHG'){changeScreen();return;}
+  if(lr){apply(lr);return;}
+  loginScreen();
 }
 function noRole(){
   lock('Acceso restringido','Tu cuenta'+(A.name?' ('+A.name+')':'')+' todavía no tiene un rol en SIGO. Envía una solicitud y el administrador te asignará el que corresponda.',[
@@ -14996,6 +15064,73 @@ async function panel(){
 function roleSel(cur){var s=h('select',{style:'padding:5px 8px;border-radius:6px;border:1px solid #cbd5e1;font-size:12px'});ORDER.forEach(function(k){var o=h('option',{value:k,text:ROLES[k].n});if(k===cur)o.selected=true;s.appendChild(o);});return s;}
 function sect(t){return h('div',{style:'font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#1a4a82;font-weight:800;margin:14px 0 6px',text:t});}
 function rowBox(){return h('div',{style:'display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #d6e6f0;border-radius:8px;padding:8px 10px;margin-bottom:6px'});}
+
+var LASTKEY={};
+async function tablaRoles(){
+  var res=await ACC.mcp.callTool('Google Sheets','get_values',{spreadsheetId:SHEETS_ID,range:'Tarifario!A1:G300'},{cache:false});
+  var v=valsOf(res),hi=-1;
+  for(var i=0;i<v.length;i++){var r=v[i]||[];if(String(r[0]||'').toUpperCase().indexOf('PROVEEDOR/SUPERVISOR')===0&&/ID USUARIO/i.test(String(r[4]||'')))hi=i;}
+  if(hi<0)throw new Error('No encontré la “Tabla de roles” en la pestaña Tarifario.');
+  var out=[];
+  for(var j=hi+1;j<v.length;j++){var q=v[j]||[];if(!String(q[0]||'').trim())break;
+    out.push({nombre:String(q[0]).trim(),tel:String(q[2]||'').replace(/\D/g,''),perfil:String(q[3]||'').trim(),id:String(q[4]||'').trim().toLowerCase(),activo:!/^no$/i.test(String(q[6]||'SI').trim())});}
+  return out;
+}
+async function usuariosBlock(body){
+  body.appendChild(sect('Usuarios definidos · ID y clave'));
+  var box=h('div',{style:'background:#fff;border:1px solid #d6e6f0;border-radius:8px;padding:10px 12px'});
+  body.appendChild(box);
+  box.textContent='Cargando la Tabla de roles…';
+  var tabla=[],us={};
+  try{tabla=await tablaRoles();}catch(e){box.textContent='No pude leer la Tabla de roles: '+errTxt(e);return;}
+  try{(await A.db.collection('usuarios').get()).docs.forEach(function(d){us[d.id]=d.data()||{};});}catch(e){}
+  box.textContent='';
+  var q=h('input',{placeholder:'Buscar por nombre, ID o perfil…',style:'width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;margin-bottom:8px'});
+  var list=h('div');box.appendChild(q);box.appendChild(list);
+  function draw(){
+    list.textContent='';var f=nrm(q.value),n=0;
+    tabla.forEach(function(t){
+      var rol=PERFIL2ROL[nrm(t.perfil)];
+      if(f&&(nrm(t.nombre)+' '+t.id+' '+nrm(t.perfil)).indexOf(f)<0)return;
+      n++;
+      var u=us[t.id],row=rowBox();
+      var info=h('div',{style:'flex:1;min-width:200px'},[
+        h('b',{style:'font-size:13px',text:t.nombre}),
+        h('div',{style:'font-size:11px;color:#64748b',text:'ID: '+t.id+' · '+t.perfil+(rol?'':' · perfil sin rol en SIGO')}),
+        h('div',{style:'font-size:11px;margin-top:2px;color:'+(u?(u.activo===false?'#b45309':'#1a8c3a'):'#94a3b8'),text:u?(u.activo===false?'Desactivado':'Con acceso · '+(ROLES[u.rol]||{}).n):'Sin acceso'})]);
+      row.appendChild(info);
+      var acts=h('div',{style:'display:flex;gap:6px;flex-wrap:wrap'});
+      if(rol&&t.id){
+        acts.appendChild(h('button',{style:BTN+'background:#1a4a82;color:#fff;padding:6px 10px',text:u?'Nueva clave':'Dar acceso + clave',onclick:async function(ev){
+          ev.target.disabled=true;
+          try{var k=genClave();
+            await A.db.doc('usuarios/'+t.id).set({nombre:t.nombre,rol:(u&&u.rol)||rol,activo:u?u.activo!==false:true,ts:Date.now(),por:A.uid});
+            await setClave(t.id,k,true);LASTKEY[t.id]=k;us[t.id]={nombre:t.nombre,rol:(u&&u.rol)||rol,activo:true};draw();
+          }catch(e){alert_(errTxt(e));ev.target.disabled=false;}}}));
+        if(u){
+          var s=roleSel(u.rol);s.onchange=async function(){await A.db.doc('usuarios/'+t.id).update({rol:s.value});us[t.id].rol=s.value;draw();};acts.appendChild(s);
+          acts.appendChild(h('button',{style:BTN+'background:'+(u.activo===false?'#dcfce7':'#fef3c7')+';color:#0c2d5a;padding:6px 10px',text:u.activo===false?'Activar':'Desactivar',onclick:async function(){await A.db.doc('usuarios/'+t.id).update({activo:u.activo===false});us[t.id].activo=u.activo===false;draw();}}));
+          acts.appendChild(h('button',{style:BTN+'background:#e2e8f0;color:#b91c1c;padding:6px 10px',text:'Quitar',onclick:async function(){await A.db.doc('usuarios/'+t.id).delete();try{await A.db.doc('claves/'+t.id).delete();}catch(e){}delete us[t.id];delete LASTKEY[t.id];draw();}}));
+        }
+      }
+      row.appendChild(acts);
+      if(LASTKEY[t.id]){
+        var kb=h('div',{style:'flex-basis:100%;background:#ecfdf5;border:1px dashed #1a8c3a;border-radius:6px;padding:6px 10px;font-size:12px'},[
+          h('span',{text:'Clave temporal: '}),h('b',{style:'font-family:monospace;font-size:14px;user-select:all',text:LASTKEY[t.id]}),
+          h('span',{style:'color:#64748b',text:' · se muestra solo mientras tengas este panel abierto; la persona la cambia en su primer ingreso. '})]);
+        kb.appendChild(h('button',{style:BTN+'background:#1a4a82;color:#fff;padding:3px 8px;font-size:11px;margin-left:4px',text:'Copiar',onclick:function(ev){var txt='SIGO · ID de usuario: '+t.id+' · Clave temporal: '+LASTKEY[t.id];try{navigator.clipboard.writeText(txt).then(function(){ev.target.textContent='Copiado';});}catch(e){}}}));
+        if(t.tel){var msg='Hola '+t.nombre.split(' ')[0]+', este es tu acceso a SIGO. ID de usuario: '+t.id+' · Clave temporal: '+LASTKEY[t.id]+'. Ábrelo con el enlace que te compartió el administrador y cambia tu clave al entrar.';
+          kb.appendChild(h('a',{href:'https://wa.me/'+t.tel+'?text='+encodeURIComponent(msg),target:'_blank',rel:'noopener',style:'margin-left:6px;color:#128c7e;font-weight:700;font-size:12px',text:'Enviar por WhatsApp ↗'}));}
+        row.appendChild(kb);
+      }
+      list.appendChild(row);
+    });
+    if(!n)list.appendChild(h('div',{style:'font-size:12px;color:#64748b',text:'Sin coincidencias.'}));
+  }
+  function alert_(t){list.insertBefore(h('div',{style:'color:#b91c1c;font-size:12px;margin-bottom:6px',text:'No se pudo: '+t}),list.firstChild);}
+  q.oninput=draw;draw();
+  box.appendChild(h('div',{style:'font-size:11px;color:#64748b;margin-top:8px;line-height:1.5',text:'Cada persona entra con su ID de usuario y su clave; la primera vez debe cambiarla (mínimo 8 caracteres, letras y números) y se bloquea 15 minutos tras 5 intentos fallidos. Las claves se guardan cifradas (nunca en texto plano). El rol sale del perfil de la Tabla de roles y puedes cambiarlo aquí.'}));
+}
 async function render(body){
   body.textContent='Cargando…';
   var db=A.db,user=A.user;
@@ -15008,6 +15143,7 @@ async function render(body){
   var nm=function(id){var p=P[id];return (p&&p.name)||'Persona sin nombre visible';};
   body.textContent='';
   body.appendChild(h('div',{style:'font-size:12px;color:#475569;line-height:1.5',text:'El dueño y los editores del artefacto siempre son Administradores. Para todos los demás, SIGO solo se abre si aquí tienen un rol activo. Comparte el enlace de SIGO únicamente con quienes vayan a usarlo.'}));
+  await usuariosBlock(body);
   // Solicitudes
   body.appendChild(sect('Solicitudes pendientes ('+sol.length+')'));
   if(!sol.length)body.appendChild(h('div',{style:'font-size:12px;color:#64748b',text:'No hay solicitudes.'}));
@@ -15020,7 +15156,7 @@ async function render(body){
     body.appendChild(row);
   });
   // Usuarios con acceso
-  body.appendChild(sect('Personas con acceso ('+acc.length+')'));
+  body.appendChild(sect('Accesos directos por cuenta de Claude, sin clave ('+acc.length+')'));
   if(!acc.length)body.appendChild(h('div',{style:'font-size:12px;color:#64748b',text:'Aún no hay personas con rol asignado.'}));
   acc.forEach(function(d){
     var x=d.data()||{},s=roleSel(x.rol),row=rowBox(),on=x.activo!==false;
@@ -15065,7 +15201,7 @@ async function render(body){
   tb.appendChild(h('div',{},[h('b',{text:'Técnico: '}),h('span',{text:'Hoy, Ruta, MC, Instalaciones, Retiros y Taller; registra reportes de campo.'})]));
   body.appendChild(tb);
 }
-window.accPanel=panel;window.accPublish=publish;window.accFlush=flush;
+window.accPanel=panel;
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
