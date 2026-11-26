@@ -8983,6 +8983,7 @@ async function ioExportWeb(){
     if(!tpl){try{tpl=await(await fetch(location.href.split('#')[0])).text();}catch(e){}}
     if(!tpl)throw new Error('esta versión compartida no incluye la plantilla de la web de consulta: expórtala desde la versión completa');
     tpl=ioPublicize(tpl,fecha);
+    if(!/^\s*<!doctype/i.test(tpl))tpl='<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>'+tpl+'</body></html>';
     say('1/2 index.html…');
     await guardar('index.html',new Blob([tpl],{type:'text/html'}));
     // 2) Los datos: el mismo libro que alimenta el dashboard hoy
@@ -17792,7 +17793,7 @@ var ROLES={
  ASIS:{n:'Asistente de operaciones',tabs:'*',com:1,tec:1,w:['campo','log','cierre']},
  SUP:{n:'Supervisor comercial',tabs:['hoy','ruta','supervisor','vcom','aprob','hv','inv','revequipos','mapaprod','mp','mc','pi','rt','alclima','taller'],com:1,tec:1,w:['prospecto','log']},
  GCOM:{n:'Gerente comercial',tabs:['hoy','ruta','supervisor','vcom','aprob','hv','rep','rent','prosp','centro','inv','revequipos','mapaprod','mp','mc','pi','rt','alclima','taller'],com:1,tec:1,w:['prospecto','log']},
- CONSULTA:{n:'Consulta pública',tabs:'*',com:1,tec:1,w:[]},
+ CONSULTA:{n:'Consulta pública',tabs:['vcom','supervisor','revequipos','mapaprod','hv','mp','mc','pi','rt','rep','rent','scorecard','centro','resumen','overview','analytics','proforma','consist','calelec'],com:1,tec:1,w:[]},
  TEC:{n:'Técnico',tabs:['hoy','ruta','mc','pi','rt','alclima','taller'],com:0,tec:0,w:['campo','log']}
 };
 var ORDER=['ADMIN','COORD','ASIS','SUP','GCOM','TEC'];window.ROLES=ROLES;
@@ -21648,6 +21649,25 @@ function copiar(i){
 window.supListaAbrir=abrir;window.supListaEnviar=enviar;window.supListaCopiar=copiar;window.supListaTexto=function(canal){const r=SUP_FILTERED||[];return {cab:cabecera(r,canal==='whatsapp'),lineas:r.map((x,i)=>linea(x,i+1,canal==='whatsapp'))};};
 setTimeout(()=>{if(window.IO_PUBLIC){const b=$('sup-envio-btns');if(b)b.style.display='none';}},0);
 })();
+(function(){
+if(!window.IO_PUBLIC)return;
+var st=document.createElement('style');
+st.textContent='#hm-g-tec,#hm-c-tec,#hm-o-tec{display:none!important}.hm-opt[onclick*="psOpen"],.hm-opt[onclick*="homeInv"]{display:none!important}';
+document.head.appendChild(st);
+var RX=/(registrar|ingresar|ingreso|agregar|guardar|nuevo\b|nueva\b|crear\b|solicitar|enviar por|aprobar|asignar|anular|cerrar caso|cargar desde|reportar|importar|programar|subir|publicar)/i;
+var KEEP=/(exportar|excel|descargar|copiar|buscar|filtr|limpiar)/i;
+function sweep(){
+  document.querySelectorAll('button,.btn,a[onclick],[role=button]').forEach(function(el){
+    if(el.__c)return;var t=(el.textContent||'').trim();
+    if(!t||t.length>90)return;el.__c=1;
+    if(RX.test(t)&&!KEEP.test(t))el.style.setProperty('display','none','important');
+  });
+}
+var pend=false;
+new MutationObserver(function(){if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;sweep();});}).observe(document.documentElement,{childList:true,subtree:true});
+sweep();
+})();
+
 
 </script>
 
