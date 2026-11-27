@@ -1,0 +1,58 @@
+name: Actualizar web de consulta
+
+# Al pulsar "Exportar web de consulta" en SIGO, el index.html nuevo queda en la carpeta
+# pública de Drive "SIGO · Web de consulta (publicación automática)". Este proceso lo baja
+# y lo publica en este repositorio (GitHub Pages). Corre cada 10 minutos o a mano.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: web-consulta
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Bajar la última versión desde Drive
+        run: |
+          pip install --quiet gdown
+          gdown --folder "https://drive.google.com/drive/folders/1TrPU3cUiFyjRYppbGpbEwReAbvRTHo5S" -O drive_web --remaining-ok --quiet || true
+          ULT=$(ls drive_web/index_*.html 2>/dev/null | sort | tail -n 1)
+          if [ -z "$ULT" ]; then
+            echo "No hay exportaciones en Drive: nada que publicar."
+            echo "SKIP=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          TAM=$(stat -c%s "$ULT")
+          echo "Última versión: $ULT ($TAM bytes)"
+          # controles: página completa, versión de consulta y menos de 25 MB
+          if [ "$TAM" -lt 1000000 ]; then echo "Archivo demasiado pequeño: no se publica"; exit 1; fi
+          if [ "$TAM" -ge 25000000 ]; then echo "Pesa $TAM bytes (25 MB o más): no se publica"; exit 1; fi
+          grep -q "IO_PUBLIC" "$ULT" || { echo "No es una exportación de la web de consulta"; exit 1; }
+          cp "$ULT" index.html
+          rm -rf drive_web
+
+      - name: Publicar si cambió
+        if: env.SKIP != '1'
+        run: |
+          git config user.name "sigo-bot"
+          git config user.email "sigo-bot@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Actualiza web de consulta ($(date -u +%Y-%m-%d\ %H:%M) UTC)"
+            git push
+          fi
